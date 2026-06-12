@@ -33,10 +33,10 @@
 
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="rememberMe">
+                  <input v-model="rememberMe" class="form-check-input" type="checkbox" id="rememberMe">
                   <label class="form-check-label text-muted small" for="rememberMe">Запам'ятати мене</label>
                 </div>
-                <a href="#" class="text-decoration-none small">Забули пароль?</a>
+                <a href="#" @click.prevent="handleForgotPassword" class="text-decoration-none small">Забули пароль?</a>
               </div>
 
               <button type="submit" class="btn btn-primary w-100 fw-bold py-2">
@@ -62,6 +62,11 @@ const emit = defineEmits(['navigate']);
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
+const rememberMe = ref(false);
+
+const handleForgotPassword = () => {
+  alert("Для відновлення пароля, будь ласка, зверніться до служби підтримки: support@mycontacts.com");
+};
 
 const handleLogin = async () => {
   try {
@@ -75,6 +80,13 @@ const handleLogin = async () => {
     
     if (res.ok) {
       localStorage.setItem('user', JSON.stringify(data));
+      
+      if (rememberMe.value) {
+        localStorage.setItem('remembered', 'true');
+      } else {
+        localStorage.removeItem('remembered');
+      }
+
       emit('navigate', 'index');
     } else {
       errorMessage.value = data.error || 'Помилка входу';
